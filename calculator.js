@@ -6,6 +6,7 @@ let waitingForNextOperation = false;
 
 const all_buttons = document.querySelectorAll('.btn-general');
 const display = document.querySelector("#display");
+const divide_by_zero_responses = ["No.", "I shall not.", "I don't think so.", "Try again.", "Ahh! Zero!!!"];
 
 function add(numOne, numTwo){
     return numOne + numTwo;
@@ -21,7 +22,8 @@ function multiply(numOne, numTwo){
 
 function divide(numOne, numTwo){
     if (numTwo === 0){
-        // CANNOT DIVIDE BY ZERO!
+        const randomIndex = Math.floor(Math.random() * divide_by_zero_responses.length);
+        return divide_by_zero_responses[randomIndex];
     }
     return numOne / numTwo;
 }
@@ -43,6 +45,17 @@ function clearDisplay(){
     operator = "";
     shouldClearDisplay = false;
     waitingForNextOperation = false;
+}
+
+function checkOverflow() {
+    const displayWidth = display.offsetWidth;
+    const contentWidth = display.scrollWidth;
+
+    if (contentWidth > displayWidth) {
+        display.classList.add('shrink-text');
+    } else {
+        display.classList.remove('shrink-text');
+    }
 }
 
 all_buttons.forEach(button => { 
@@ -86,12 +99,32 @@ all_buttons.forEach(button => {
             if (numberOne !== null && operator !== "" && waitingForNextOperation) {
                 const numberTwo = display.value;
                 const result = operate(numberOne, numberTwo, operator);
-                display.value = result === "Error" ? "Error" : result;
-
-                numberOne = null;
-                operator = "";
-                shouldClearDisplay = true;
-                waitingForNextOperation = false;
+                const originalButtonText = new Map();
+                if (divide_by_zero_responses.includes(result)) {
+                    display.value = result;
+                    all_buttons.forEach(btn => {
+                        originalButtonText.set(btn, btn.textContent);
+                        btn.textContent = "";
+                        btn.disabled = true;
+                    });
+                    setTimeout(() => {
+                        display.value = "0";
+                        numberOne = null;
+                        operator = "";
+                        shouldClearDisplay = true;
+                        waitingForNextOperation = false;
+                        all_buttons.forEach(btn => {
+                            btn.textContent = originalButtonText.get(btn);
+                            btn.disabled = false;
+                        });
+                    }, 2000);
+                } else {
+                    display.value = result;
+                    numberOne = null;
+                    operator = "";
+                    shouldClearDisplay = true;
+                    waitingForNextOperation = false;
+                }
             }
         }
 
@@ -110,6 +143,8 @@ all_buttons.forEach(button => {
                 display.value = "0";
             }
         }
+
+        checkOverflow();
   });
 });
 

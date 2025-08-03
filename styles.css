@@ -32,7 +32,14 @@ body {
     color: white;
     text-align: right;
     padding: 10px 20px;
-    font-size: 3em;
+    min-width: 0; 
+    font-size: clamp(1em, 3em, 3em);
+    white-space: nowrap; 
+    overflow: hidden;
+}
+
+.shrink-text {
+    font-size: clamp(1em, 2em, 2em); 
 }
 
 .btn-general {
