@@ -38,10 +38,6 @@ body {
     overflow: hidden;
 }
 
-.shrink-text {
-    font-size: clamp(1em, 2em, 2em); 
-}
-
 .btn-general {
     width: 64px;
     height: 64px;

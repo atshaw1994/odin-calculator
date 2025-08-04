@@ -6,7 +6,15 @@ let waitingForNextOperation = false;
 
 const all_buttons = document.querySelectorAll('.btn-general');
 const display = document.querySelector("#display");
-const divide_by_zero_responses = ["No.", "I shall not.", "I don't think so.", "Try again.", "Ahh! Zero!!!"];
+const divide_by_zero_responses = [
+    "No.",
+    "Your mom divides by zero!",
+    "Ahh! Zero!!!",
+    "I shall not.",
+    "I don't think so",
+    "Get outta here with that mess.",
+    "Dividing by zero is undefined in standard mathematical operations because it leads to results that contradict fundamental arithmetic principles. While it's not an illegal operation, it's not possible to assign a meaningful value to division by zero within the usual mathematical framework.",
+    "You've created a black hole that will suck everyone in and lead to the destruction of the universe.\nGood Job.\nNow we're all dead."];
 
 function add(numOne, numTwo){
     return numOne + numTwo;
@@ -47,17 +55,6 @@ function clearDisplay(){
     waitingForNextOperation = false;
 }
 
-function checkOverflow() {
-    const displayWidth = display.offsetWidth;
-    const contentWidth = display.scrollWidth;
-
-    if (contentWidth > displayWidth) {
-        display.classList.add('shrink-text');
-    } else {
-        display.classList.remove('shrink-text');
-    }
-}
-
 all_buttons.forEach(button => { 
     button.addEventListener('click', event => {
         const buttonValue = event.target.textContent;
@@ -84,7 +81,6 @@ all_buttons.forEach(button => {
             if (numberOne !== null && waitingForNextOperation) {
                 const numberTwo = display.value;
                 const result = operate(numberOne, numberTwo, operator);
-                display.value = result === "Error" ? "Error" : result;
                 numberOne = result;
             } else if (numberOne === null) {
                 numberOne = display.value;
@@ -99,28 +95,12 @@ all_buttons.forEach(button => {
             if (numberOne !== null && operator !== "" && waitingForNextOperation) {
                 const numberTwo = display.value;
                 const result = operate(numberOne, numberTwo, operator);
-                const originalButtonText = new Map();
                 if (divide_by_zero_responses.includes(result)) {
-                    display.value = result;
-                    all_buttons.forEach(btn => {
-                        originalButtonText.set(btn, btn.textContent);
-                        btn.textContent = "";
-                        btn.disabled = true;
-                    });
-                    setTimeout(() => {
-                        display.value = "0";
-                        numberOne = null;
-                        operator = "";
-                        shouldClearDisplay = true;
-                        waitingForNextOperation = false;
-                        all_buttons.forEach(btn => {
-                            btn.textContent = originalButtonText.get(btn);
-                            btn.disabled = false;
-                        });
-                    }, 2000);
+                    alert(result);
                 } else {
-                    display.value = result;
+                    display.value = 0;
                     numberOne = null;
+                    numberTwo = null;
                     operator = "";
                     shouldClearDisplay = true;
                     waitingForNextOperation = false;
@@ -143,8 +123,6 @@ all_buttons.forEach(button => {
                 display.value = "0";
             }
         }
-
-        checkOverflow();
   });
 });
 
