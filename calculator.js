@@ -76,8 +76,9 @@ function handleOperator(buttonValue) {
     if (numberOne !== null && waitingForNextOperation) {
         const numberTwo = display.value;
         const result = operate(numberOne, numberTwo, operator);
+        display.value = result;
         numberOne = result;
-    } else if (numberOne === null) {
+    } else {
         numberOne = display.value;
     }
     operator = buttonValue;
@@ -87,13 +88,19 @@ function handleOperator(buttonValue) {
 
 function handleEquals() {
     if (numberOne !== null && operator !== "" && waitingForNextOperation) {
-        const numberTwo = display.value;
+        let numberTwo = display.value;
         const result = operate(numberOne, numberTwo, operator);
+
         if (divide_by_zero_responses.includes(result)) {
             alert(result);
         } else {
-            display.value = 0;
-            numberOne = null;
+            // Display the result
+            display.value = result;
+
+            // Store the result as the new numberOne for chained operations
+            numberOne = result; 
+            
+            // Reset numberTwo and operator for the next calculation
             numberTwo = null;
             operator = "";
             shouldClearDisplay = true;
@@ -115,13 +122,12 @@ function handleDelete() {
 all_buttons.forEach(button => { 
     button.addEventListener('click', event => {
         const buttonValue = event.target.textContent;
-
         if (!isNaN(buttonValue) || buttonValue === '.') {
             handleNumberAndDecimal(buttonValue);
-        } else if (event.target.classList.contains('btn-operator') && buttonValue !== '=') {
-            handleOperator(buttonValue);
         } else if (buttonValue === '=') {
             handleEquals();
+        } else if (event.target.classList.contains('btn-operator')) {
+            handleOperator(buttonValue);
         } else if (buttonValue === 'AC') {
             clearDisplay();
         } else if (buttonValue === 'Del') {
